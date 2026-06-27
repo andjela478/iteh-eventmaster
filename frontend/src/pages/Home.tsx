@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { eventsAPI, categoriesAPI } from '../services/api';
+import { useAuth } from '../context/useAuth';
 import type { Event, Category } from '../types';
 import EventCard from '../components/EventCard';
 import Input from '../components/Input';
+import Button from '../components/Button';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -59,8 +64,17 @@ const Home = () => {
   }
 
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Svi Događaji</h1>
+    <div className="container mt-4 mb-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Svi Događaji</h1>
+        {user?.role === 'organizer' && (
+          <Button
+            text="+ Kreiraj Događaj"
+            onClick={() => navigate('/create-event')}
+            variant="primary"
+          />
+        )}
+      </div>
 
       <div className="row mb-4">
         <div className="col-md-8">
@@ -91,7 +105,7 @@ const Home = () => {
       {filteredEvents.length === 0 ? (
         <p className="text-muted">Nema dostupnih događaja.</p>
       ) : (
-        <div className="row g-4">
+        <div className="row g-4 mb-5">
           {filteredEvents.map(event => (
             <div key={event.id} className="col-md-4">
               <EventCard event={event} />

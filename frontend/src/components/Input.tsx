@@ -5,9 +5,10 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   label?: string;
+  name?: string;
 }
 
-const Input = ({ type, placeholder, value, onChange, required = false, label }: InputProps) => {
+const Input = ({ type, placeholder, value, onChange, required = false, label, name }: InputProps) => {
   return (
     <div className="mb-3">
       {label && (
@@ -17,6 +18,7 @@ const Input = ({ type, placeholder, value, onChange, required = false, label }: 
       )}
       <input
         type={type}
+        name={name}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

@@ -11,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'user' | 'organizer'>('user');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const { login, register } = useAuth();
   const navigate = useNavigate();
@@ -18,14 +19,19 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
 
     try {
       if (isLogin) {
         await login({ email, password });
+        navigate('/home');
       } else {
         await register({ name, email, password, role });
+        // Nakon registracije, prebaci na login formu
+        setIsLogin(true);
+        setPassword('');
+        setSuccess('Uspešno registrovan! Prijavite se sa vašim nalogom.');
       }
-      navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Greška prilikom prijave');
     }
@@ -40,6 +46,12 @@ const Login = () => {
               <h2 className="card-title text-center mb-4">
                 {isLogin ? 'Prijava' : 'Registracija'}
               </h2>
+
+              {success && (
+                <div className="alert alert-success" role="alert">
+                  {success}
+                </div>
+              )}
 
               {error && (
                 <div className="alert alert-danger" role="alert">
@@ -103,7 +115,11 @@ const Login = () => {
               <p className="mt-3 text-center">
                 {isLogin ? 'Nemate nalog? ' : 'Već imate nalog? '}
                 <button
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setSuccess('');
+                    setError('');
+                  }}
                   className="btn btn-link p-0"
                 >
                   {isLogin ? 'Registrujte se' : 'Prijavite se'}
