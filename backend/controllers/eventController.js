@@ -7,7 +7,8 @@ exports.getAllEvents = async (req, res) => {
       include: [
         { model: Category, as: 'category' },
         { model: Location, as: 'location' },
-        { model: User, as: 'organizer', attributes: ['id', 'name', 'email'] }
+        { model: User, as: 'organizer', attributes: ['id', 'name', 'email'] },
+        { model: Registration, as: 'registrations' }
       ]
     });
     res.json(events);
@@ -41,15 +42,17 @@ exports.getEventById = async (req, res) => {
 // Kreiranje događaja
 exports.createEvent = async (req, res) => {
   try {
-    const { title, description, date, max_participants, category_id, location_id } = req.body;
+    const { title, short_description, description, date, max_participants, category_id, location_id, image_url } = req.body;
 
     const event = await Event.create({
       title,
+      short_description,
       description,
       date,
       max_participants,
       category_id,
       location_id,
+      image_url,
       organizer_id: req.user.id
     });
 
@@ -108,5 +111,32 @@ exports.deleteEvent = async (req, res) => {
     res.json({ message: 'Događaj uspešno obrisan' });
   } catch (error) {
     res.status(500).json({ message: 'Greska prilikom brisanja događaja', error: error.message });
+  }
+};
+
+// Dobavljanje prijava za događaj
+exports.getEventRegistrations = async (req, res) => {
+  try {
+    const event = await Event.findByPk(req.params.id, {
+      include: [
+        {
+          model: Registration,
+          as: 'registrations',
+          where: { status: 'active' },
+          required: false,
+          include: [
+            { model: User, as: 'user', attributes: ['id', 'name', 'email'] }
+          ]
+        }
+      ]
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: 'Događaj nije pronađen' });
+    }
+
+    res.json(event.registrations || []);
+  } catch (error) {
+    res.status(500).json({ message: 'Greska prilikom dobavljanja prijava', error: error.message });
   }
 };

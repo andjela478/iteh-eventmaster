@@ -11,6 +11,10 @@ const Event = sequelize.define('Event', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  short_description: {
+    type: DataTypes.STRING(255),
+    allowNull: true
+  },
   description: {
     type: DataTypes.TEXT
   },
@@ -45,6 +49,10 @@ const Event = sequelize.define('Event', {
       model: 'locations',
       key: 'id'
     }
+  },
+  image_url: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   tableName: 'events',
