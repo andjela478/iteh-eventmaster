@@ -59,6 +59,11 @@ export const eventsAPI = {
   delete: async (id: number) => {
     const response = await api.delete<{ message: string }>(`/events/${id}`);
     return response.data;
+  },
+
+  getRegistrations: async (eventId: number) => {
+    const response = await api.get<any[]>(`/events/${eventId}/registrations`);
+    return response.data;
   }
 };
 
@@ -66,6 +71,11 @@ export const eventsAPI = {
 export const categoriesAPI = {
   getAll: async () => {
     const response = await api.get<Category[]>('/categories');
+    return response.data;
+  },
+
+  create: async (name: string, description?: string) => {
+    const response = await api.post<{ message: string; category: Category }>('/categories', { name, description });
     return response.data;
   }
 };

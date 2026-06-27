@@ -22,12 +22,14 @@ export interface Location {
 export interface Event {
   id: number;
   title: string;
+  short_description?: string;
   description?: string;
   date: string;
   max_participants: number;
   organizer_id: number;
   category_id: number;
   location_id: number;
+  image_url?: string;
   createdAt?: string;
   updatedAt?: string;
   category?: Category;
